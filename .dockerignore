@@ -1,0 +1,18 @@
+# Игнорируемые файлы в Docker
+.git/
+.gitignore
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+*.log
+logs/
+data/
+.DS_Store
+docker-compose.override.yml
+.env
