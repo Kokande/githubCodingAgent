@@ -7,7 +7,7 @@ from github import Github, Repository, GithubException
 from langchain_gigachat import GigaChat
 from langchain_core.messages import SystemMessage, HumanMessage, BaseMessage, AIMessage
 from langgraph.checkpoint.memory import InMemorySaver
-from langchain_gigachat.tools import giga_tool
+from langchain_gigachat.tools.giga_tool import giga_tool
 from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
 
