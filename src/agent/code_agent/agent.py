@@ -123,7 +123,7 @@ def agent_node(state: AgentState):
     if not messages or not isinstance(messages[0], SystemMessage):
         messages = [sys_msg] + messages
 
-    response = llm_with_tools.invoke(messages)
+    response = llm_with_tools.invoke(messages, {"configurable": {"thread_id": "1"}})
 
     return {"messages": [response]}
 
