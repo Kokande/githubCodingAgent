@@ -1,13 +1,11 @@
+import sys
 import json
 import logging
 from contextlib import asynccontextmanager
-from typing import Optional, Dict, Any, List
 
 import uvicorn
 from fastapi.responses import JSONResponse
-from fastapi.exceptions import HTTPException
-from fastapi import FastAPI, Request, Header
-from pydantic import BaseModel, Field
+from fastapi import FastAPI, Request
 
 app = FastAPI(title="Coding Agent")
 logger = logging.getLogger(__name__)
