@@ -83,7 +83,7 @@ async def github_webhook(request: Request):
                 issue = repo.get_issue(number=payload.get("issue").get("number"))
                 logger.info(f"Issue content: {issue.title} - {issue.body}")
 
-                run_coding_agent(repo, issue.title, issue.body)
+                logger.info(await run_coding_agent(repo, issue.title, issue.body))
 
                 return {"status": "processed"}
 

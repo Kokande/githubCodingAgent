@@ -153,7 +153,7 @@ def create_pr_node(state: AgentState):
         return {"messages": [AIMessage(content=f"PR Failed: {str(e)}")]}
 
 
-def run_coding_agent(repo: Repository, issue_title: str, issue_desc: str) -> str:
+async def run_coding_agent(repo: Repository, issue_title: str, issue_desc: str) -> str:
     """
     The main entry point to run the agent.
 
@@ -195,13 +195,6 @@ def run_coding_agent(repo: Repository, issue_title: str, issue_desc: str) -> str
     logger.info(f"--- Agent Started on {repo.full_name} (Branch: {branch_name}) ---")
     final_output = ""
 
-    for event in app.stream(initial_state, {"configurable": {"thread_id": "1"}}):
-        for key, value in event.items():
-            if key == "agent":
-                msg = value["messages"][-1]
-                logger.info(f"Agent: {msg.content}")
-            elif key == "create_pr":
-                final_output = value["messages"][-1].content
-                logger.info(f"System: {final_output}")
+    resp = await app.ainvoke(initial_state, {"configurable": {"thread_id": "1"}})
 
-    return final_output
+    return resp['messages'][-1].content
