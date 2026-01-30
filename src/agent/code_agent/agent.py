@@ -92,7 +92,7 @@ def update_file(repo_full_name: str, file_path: str, new_content: str, commit_me
 
 
 def agent_node(state: AgentState):
-    logger.info(f"Code agents state: {state}")
+    logger.info(f"Code agents messages: {state['messages']}")
 
     repo_name = state["repo_full_name"]
 
@@ -124,6 +124,7 @@ def agent_node(state: AgentState):
         messages = [sys_msg] + messages
 
     response = llm_with_tools.invoke(messages)
+    logger.info(f"LLM call: {response}")
 
     return {"messages": [response]}
 
