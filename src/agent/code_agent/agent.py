@@ -6,6 +6,7 @@ from github import Github, Repository, GithubException
 
 from langchain_gigachat import GigaChat
 from langchain_core.messages import SystemMessage, HumanMessage, BaseMessage, AIMessage
+from langgraph.checkpoint.memory import InMemorySaver
 from langchain_core.tools import tool
 from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
@@ -91,6 +92,8 @@ def update_file(repo_full_name: str, file_path: str, new_content: str, commit_me
 
 
 def agent_node(state: AgentState):
+    logger.info(f"Code agents state: {state}")
+
     repo_name = state["repo_full_name"]
 
     llm = GigaChat(
@@ -121,8 +124,6 @@ def agent_node(state: AgentState):
         messages = [sys_msg] + messages
 
     response = llm_with_tools.invoke(messages)
-
-    logger.info(f"Code agents response: {response.json()}")
 
     return {"messages": [response]}
 
@@ -170,11 +171,13 @@ def run_coding_agent(repo: Repository, issue_title: str, issue_desc: str) -> str
     workflow.add_node("create_pr", create_pr_node)
 
     workflow.set_entry_point("agent")
-    workflow.add_conditional_edges("agent", should_continue, ["tools", "create_pr", "agent"])
+    workflow.add_conditional_edges("agent", should_continue, ["tools", "create_pr"])
     workflow.add_edge("tools", "agent")
     workflow.add_edge("create_pr", END)
 
-    app = workflow.compile()
+    app = workflow.compile(
+        checkpointer=InMemorySaver()
+    )
 
     safe_title = "".join(c if c.isalnum() else "-" for c in issue_title.lower())[:30]
     branch_name = f"agent/fix-{safe_title}"
@@ -185,7 +188,7 @@ def run_coding_agent(repo: Repository, issue_title: str, issue_desc: str) -> str
         "issue_title": issue_title,
         "issue_desc": issue_desc,
         "branch_name": branch_name,
-        "messages": [HumanMessage(content="Start the diagnosis and fix.")]
+        "messages": [HumanMessage(content="Приступай к диагностике и исправлению.")]
     }
 
     logger.info(f"--- Agent Started on {repo.full_name} (Branch: {branch_name}) ---")
