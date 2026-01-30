@@ -123,7 +123,7 @@ def agent_node(state: AgentState):
     if not messages or not isinstance(messages[0], SystemMessage):
         messages = [sys_msg] + messages
 
-    response = llm_with_tools.invoke(messages, {"configurable": {"thread_id": "1"}})
+    response = llm_with_tools.invoke(messages)
 
     return {"messages": [response]}
 
@@ -194,7 +194,7 @@ def run_coding_agent(repo: Repository, issue_title: str, issue_desc: str) -> str
     logger.info(f"--- Agent Started on {repo.full_name} (Branch: {branch_name}) ---")
     final_output = ""
 
-    for event in app.stream(initial_state):
+    for event in app.stream(initial_state, {"configurable": {"thread_id": "1"}}):
         for key, value in event.items():
             if key == "agent":
                 msg = value["messages"][-1]
