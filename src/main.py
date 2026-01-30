@@ -1,4 +1,5 @@
 from config import settings
+from agent.code_agent.agent import run_coding_agent
 
 import sys
 import json
@@ -79,9 +80,11 @@ async def github_webhook(request: Request):
             logger.info(f"Received issues event with action: {action}")
 
             if action == "opened":
-                # Agent
                 issue = repo.get_issue(number=payload.get("issue").get("number"))
                 logger.info(f"Issue content: {issue.title} - {issue.body}")
+
+                run_coding_agent(repo, issue.title, issue.body)
+
                 return {"status": "processed"}
 
         return {"status": "received"}
