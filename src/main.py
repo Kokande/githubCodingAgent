@@ -11,6 +11,19 @@ from pydantic import BaseModel, Field
 
 app = FastAPI(title="Coding Agent")
 logger = logging.getLogger(__name__)
+log_config = uvicorn.config.LOGGING_CONFIG
+log_config["formatters"]["access"]["fmt"] = '%(asctime)s - %(levelname)s - %(message)s'
+log_config["formatters"]["default"]["fmt"] = '%(asctime)s - %(levelname)s - %(message)s'
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout),  # Log to console
+        logging.FileHandler('webhook.log')  # Log to file
+    ]
+)
 
 
 @asynccontextmanager
@@ -85,4 +98,12 @@ async def github_webhook(request: Request):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+        log_level="info",
+        log_config=log_config,
+        access_log=True
+    )
