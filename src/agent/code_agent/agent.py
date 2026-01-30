@@ -121,6 +121,9 @@ def agent_node(state: AgentState):
         messages = [sys_msg] + messages
 
     response = llm_with_tools.invoke(messages)
+
+    logger.info(f"Code agents response: {response.json()}")
+
     return {"messages": [response]}
 
 
