@@ -1,4 +1,4 @@
-from src.config import settings
+from config import settings
 
 import logging
 from typing import List, TypedDict, Any
