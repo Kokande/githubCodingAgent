@@ -1,9 +1,10 @@
 from config import settings
 
 import logging
-from typing import List, TypedDict, Any, Sequence
+from typing import List, TypedDict, Any, Annotated
 from github import Github, Repository, GithubException
 
+from langgraph.graph.message import add_messages
 from langchain_gigachat import GigaChat
 from langchain_core.messages import SystemMessage, HumanMessage, BaseMessage, AIMessage
 from langgraph.checkpoint.memory import InMemorySaver
@@ -20,7 +21,7 @@ class AgentState(TypedDict):
     issue_title: str
     issue_desc: str
     branch_name: str
-    messages: List[BaseMessage]
+    messages: Annotated[List[BaseMessage], add_messages]
 
 
 @giga_tool
