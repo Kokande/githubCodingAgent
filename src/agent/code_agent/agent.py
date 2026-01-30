@@ -7,7 +7,7 @@ from github import Github, Repository, GithubException
 from langchain_gigachat import GigaChat
 from langchain_core.messages import SystemMessage, HumanMessage, BaseMessage, AIMessage
 from langgraph.checkpoint.memory import InMemorySaver
-from langchain_core.tools import tool
+from langchain_gigachat.tools import giga_tool
 from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
 
@@ -23,7 +23,7 @@ class AgentState(TypedDict):
     messages: List[BaseMessage]
 
 
-@tool
+@giga_tool
 async def list_files(repo_full_name: str, path: str = "") -> str:
     """
     Lists files in a specific directory of the GitHub repository.
@@ -47,7 +47,7 @@ async def list_files(repo_full_name: str, path: str = "") -> str:
         return f"Error listing files: {str(e)}"
 
 
-@tool
+@giga_tool
 async def read_file(repo_full_name: str, file_path: str) -> str:
     """
     Reads the content of a specific file.
@@ -64,7 +64,7 @@ async def read_file(repo_full_name: str, file_path: str) -> str:
         return f"Error reading file: {str(e)}"
 
 
-@tool
+@giga_tool
 async def update_file(repo_full_name: str, file_path: str, new_content: str, commit_message: str, branch: str) -> str:
     """
     Updates or creates a file in the repository on a specific branch.
