@@ -1,7 +1,7 @@
 from config import settings
 
 import logging
-from typing import List, TypedDict, Any
+from typing import List, TypedDict, Any, Sequence
 from github import Github, Repository, GithubException
 
 from langchain_gigachat import GigaChat
@@ -20,11 +20,11 @@ class AgentState(TypedDict):
     issue_title: str
     issue_desc: str
     branch_name: str
-    messages: List[BaseMessage]
+    messages: List[Sequence[BaseMessage]]
 
 
 @tool
-def list_files(repo_full_name: str, path: str = "") -> str:
+async def list_files(repo_full_name: str, path: str = "") -> str:
     """
     Lists files in a specific directory of the GitHub repository.
     Args:
@@ -48,7 +48,7 @@ def list_files(repo_full_name: str, path: str = "") -> str:
 
 
 @tool
-def read_file(repo_full_name: str, file_path: str) -> str:
+async def read_file(repo_full_name: str, file_path: str) -> str:
     """
     Reads the content of a specific file.
     Args:
@@ -65,7 +65,7 @@ def read_file(repo_full_name: str, file_path: str) -> str:
 
 
 @tool
-def update_file(repo_full_name: str, file_path: str, new_content: str, commit_message: str, branch: str) -> str:
+async def update_file(repo_full_name: str, file_path: str, new_content: str, commit_message: str, branch: str) -> str:
     """
     Updates or creates a file in the repository on a specific branch.
     """
@@ -91,7 +91,7 @@ def update_file(repo_full_name: str, file_path: str, new_content: str, commit_me
         return f"Error committing to file: {str(e)}"
 
 
-def agent_node(state: AgentState):
+async def agent_node(state: AgentState):
     logger.info(f"Code agents messages: {state['messages']}")
 
     repo_name = state["repo_full_name"]
@@ -136,7 +136,7 @@ def should_continue(state: AgentState):
     return "create_pr"
 
 
-def create_pr_node(state: AgentState):
+async def create_pr_node(state: AgentState):
     repo = state["repo"]
     title = f"Fix: {state['issue_title']}"
     body = f"Automated PR for: {state['issue_desc']}"
