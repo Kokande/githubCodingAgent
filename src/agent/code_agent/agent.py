@@ -139,9 +139,10 @@ def should_continue(state: AgentState):
 
 
 async def create_pr_node(state: AgentState):
-    repo = state["repo"]
     title = f"Fix: {state['issue_title']}"
     body = f"Automated PR for: {state['issue_desc']}"
+    g = Github(settings.github_token)
+    repo = g.get_repo(state["repo_full_name"])
 
     try:
         pr = repo.create_pull(
@@ -188,7 +189,6 @@ async def run_coding_agent(repo: Repository, issue_title: str, issue_desc: str) 
     branch_name = f"agent/fix-{safe_title}"
 
     initial_state = {
-        "repo": repo,
         "repo_full_name": repo.full_name,
         "issue_title": issue_title,
         "issue_desc": issue_desc,
