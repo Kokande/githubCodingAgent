@@ -20,7 +20,7 @@ class AgentState(TypedDict):
     issue_title: str
     issue_desc: str
     branch_name: str
-    messages: Sequence[BaseMessage]
+    messages: List[BaseMessage]
 
 
 @tool
@@ -121,7 +121,7 @@ async def agent_node(state: AgentState):
     messages = state["messages"]
 
     if not messages or not isinstance(messages[0], SystemMessage):
-        messages = [sys_msg] + [messages]
+        messages = [sys_msg] + messages
 
     response = llm_with_tools.invoke(messages)
     logger.info(f"LLM call: {response}")
@@ -165,10 +165,11 @@ async def run_coding_agent(repo: Repository, issue_title: str, issue_desc: str) 
     Returns:
         str: The final output (e.g., the PR URL or error message).
     """
+    tool_node = ToolNode([list_files, read_file, update_file])
 
     workflow = StateGraph(AgentState)
     workflow.add_node("agent", agent_node)
-    workflow.add_node("tools", ToolNode([list_files, read_file, update_file]))
+    workflow.add_node("tools", tool_node)
     workflow.add_node("create_pr", create_pr_node)
 
     workflow.set_entry_point("agent")
