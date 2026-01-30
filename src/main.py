@@ -1,4 +1,4 @@
-from config import Settings
+from config import settings
 
 import sys
 import json
@@ -16,8 +16,8 @@ log_config = uvicorn.config.LOGGING_CONFIG
 log_config["formatters"]["access"]["fmt"] = '%(asctime)s - %(levelname)s - %(message)s'
 log_config["formatters"]["default"]["fmt"] = '%(asctime)s - %(levelname)s - %(message)s'
 
-github_client = Github(auth=Auth.Token(Settings.github_token))
-repo = github_client.get_repo(Settings.repo_name)
+github_client = Github(auth=Auth.Token(settings.github_token))
+repo = github_client.get_repo(settings.repo_name)
 
 logging.basicConfig(
     level=logging.INFO,
