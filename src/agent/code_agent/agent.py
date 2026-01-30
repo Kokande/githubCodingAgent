@@ -178,7 +178,8 @@ async def run_coding_agent(repo: Repository, issue_title: str, issue_desc: str) 
     workflow.add_edge("create_pr", END)
 
     app = workflow.compile(
-        checkpointer=InMemorySaver()
+        checkpointer=InMemorySaver(),
+        debug=True
     )
 
     safe_title = "".join(c if c.isalnum() else "-" for c in issue_title.lower())[:30]
