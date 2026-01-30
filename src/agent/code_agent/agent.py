@@ -125,7 +125,7 @@ async def agent_node(state: AgentState):
     if not messages or not isinstance(messages[0], SystemMessage):
         messages = [sys_msg] + messages
 
-    response = llm_with_tools.ainvoke(messages)
+    response = await llm_with_tools.ainvoke(messages)
     logger.info(f"LLM call: {response}")
 
     return {"messages": [response]}
