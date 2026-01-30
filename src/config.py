@@ -5,9 +5,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     """Application settings"""
-    github_webhook_secret: str
     github_token: str
-    repo_name: str = "Kokande/githubCodingAgent"
+    llm_token: str
+    repo_name: str = "Kokande/WEB-project-yan"
 
     model_config = SettingsConfigDict(
         env_file=(

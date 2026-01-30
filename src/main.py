@@ -1,11 +1,14 @@
+from config import Settings
+
 import sys
 import json
 import logging
-from contextlib import asynccontextmanager
 
+from github import Auth
+from github import Github
 import uvicorn
-from fastapi.responses import JSONResponse
 from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
 app = FastAPI(title="Coding Agent")
 logger = logging.getLogger(__name__)
@@ -13,22 +16,16 @@ log_config = uvicorn.config.LOGGING_CONFIG
 log_config["formatters"]["access"]["fmt"] = '%(asctime)s - %(levelname)s - %(message)s'
 log_config["formatters"]["default"]["fmt"] = '%(asctime)s - %(levelname)s - %(message)s'
 
+github_client = Github(auth=Auth.Token(Settings.github_token))
+repo = github_client.get_repo(Settings.repo_name)
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.StreamHandler(sys.stdout),  # Log to console
-        logging.FileHandler('webhook.log')  # Log to file
+        logging.StreamHandler(sys.stdout)
     ]
 )
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    logger.info("Starting up GitHub Webhook Service...")
-    yield
-    logger.info("Shutting down...")
 
 
 @app.get("/")
@@ -83,6 +80,8 @@ async def github_webhook(request: Request):
 
             if action == "opened":
                 # Agent
+                issue = repo.get_issue(number=payload.get("issue").get("number"))
+                logger.info(f"Issue content: {issue.title} - {issue.body}")
                 return {"status": "processed"}
 
         return {"status": "received"}
