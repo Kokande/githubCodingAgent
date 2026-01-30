@@ -128,9 +128,7 @@ def should_continue(state: AgentState):
     last_message = state["messages"][-1]
     if last_message.tool_calls:
         return "tools"
-    if "READY_FOR_PR" in last_message.content:
-        return "create_pr"
-    return "agent"
+    return "create_pr"
 
 
 def create_pr_node(state: AgentState):
