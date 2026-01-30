@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     """Application settings"""
     github_token: str
     llm_token: str
-    repo_name: str = "Kokande/WEB-project-yan"
+    repo_name: str = "Kokande/geoProjFastApi"
 
     model_config = SettingsConfigDict(
         env_file=(

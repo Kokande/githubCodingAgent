@@ -102,7 +102,7 @@ async def agent_node(state: AgentState):
         temperature=0,
         verify_ssl_certs=False,
         credentials=settings.llm_token,
-        scope="GIGACHAT_API_PERS"
+        scope="GIGACHAT_API_PERS",
     )
     tools = [list_files, read_file, update_file]
     llm_with_tools = llm.bind_tools(tools)
