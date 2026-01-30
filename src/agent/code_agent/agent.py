@@ -20,7 +20,7 @@ class AgentState(TypedDict):
     issue_title: str
     issue_desc: str
     branch_name: str
-    messages: List[BaseMessage]
+    messages: Sequence[BaseMessage]
 
 
 @tool
@@ -126,7 +126,7 @@ async def agent_node(state: AgentState):
     response = llm_with_tools.invoke(messages)
     logger.info(f"LLM call: {response}")
 
-    return {"messages": messages + [response]}
+    return {"messages": [response]}
 
 
 def should_continue(state: AgentState):
